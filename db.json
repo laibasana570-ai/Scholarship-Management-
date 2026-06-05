@@ -1,0 +1,44 @@
+{
+  "scholarships": [
+    {
+      "id": "2",
+      "regNo": "IUB-BSCS-22-014",
+      "fullName": "Sara Khan",
+      "email": "sara@iub.edu.pk",
+      "cgpa": 3.2,
+      "meritScore": 75,
+      "familyIncome": 450000,
+      "scholarshipName": "Half Scholarship",
+      "scholarshipAmount": 50000,
+      "eligibilityStatus": "pending",
+      "submittedAt": "2026-06-02"
+    },
+    {
+      "id": "3",
+      "regNo": "IUB-BSCS-21-033",
+      "fullName": "Usman Tariq",
+      "email": "usman@iub.edu.pk",
+      "cgpa": 2.8,
+      "meritScore": 65,
+      "familyIncome": 600000,
+      "scholarshipName": "Not Eligible",
+      "scholarshipAmount": 0,
+      "eligibilityStatus": "rejected",
+      "submittedAt": "2026-06-03"
+    },
+    {
+      "regNo": "F24BDOCS1M01044",
+      "fullName": "laiba Sana",
+      "email": "laibasana@mail.com",
+      "cgpa": 3.2,
+      "meritScore": 75,
+      "familyIncome": 30000,
+      "scholarshipName": "Half Scholarship",
+      "scholarshipAmount": 50000,
+      "eligibilityStatus": "approved",
+      "submittedAt": "2026-06-05",
+      "id": "kGwFwZXIENs"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

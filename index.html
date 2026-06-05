@@ -1,69 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Register - Scholarship</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scholarship Eligibility Form — IUB</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="container">
-    <h1>REGISTER</h1>
-    <p class="subtitle">Please fill the details to create the account</p>
+  <!-- ── Top navigation ── -->
+  <nav class="topnav">
+    <div class="nav-wrap">
+      <div class="brand">
+        <span class="brand-icon">🎓</span>
+        <span class="brand-text">Scholarship Eligibility Form</span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" class="active">Apply</a>
+        <a href="admin.html">Admin</a>
+      </div>
+    </div>
+  </nav>
 
-    <p class="note">
-        Note: If your CNIC is already registered, please use the 
-        <span>Forgot Password</span> option.
-    </p>
+  <main class="container">
 
-    <form id="form">
+    <!-- ── Hero section ── -->
+    <section class="hero">
+      <h1>Scholarship Eligibility Form</h1>
+      <p>Check if you're eligible for our scholarship programs. Fill the form below with your academic and financial information.</p>
+    </section>
 
-        <div class="form-grid">
+    <!-- ── Two-column layout ── -->
+    <div class="layout">
 
-            <div>
-                <label>Name *</label>
-                <input type="text" id="name" placeholder="Name" required>
-            </div>
+      <!-- LEFT: Application Form -->
+      <aside class="form-panel">
+        <h2>Submit Application</h2>
 
-            <div>
-                <label>Email *</label>
-                <input type="email" id="email" placeholder="Email" required>
-            </div>
+        <form id="scholarship-form" novalidate>
 
-            <div>
-                <label>Phone *</label>
-                <input type="text" id="phone" placeholder="Phone" required>
-            </div>
+          <!-- Registration Number -->
+          <div class="field-group">
+            <label for="reg-no">Registration Number</label>
+            <input 
+              type="text" 
+              id="reg-no" 
+              placeholder="e.g. IUB-BSCS-21-001" 
+              required 
+            />
+            <span class="error-msg" id="err-reg-no"></span>
+          </div>
 
-            <div>
-                <label>CNIC *</label>
-                <input type="text" id="cnic" placeholder="XXXXX-XXXXXXX-X" required>
-            </div>
+          <!-- Full Name -->
+          <div class="field-group">
+            <label for="full-name">Full Name</label>
+            <input 
+              type="text" 
+              id="full-name" 
+              placeholder="Enter your full name" 
+              required 
+            />
+            <span class="error-msg" id="err-full-name"></span>
+          </div>
 
-            <div>
-                <label>Password *</label>
-                <input type="password" id="password" placeholder="Password" required>
-            </div>
+          <!-- Email -->
+          <div class="field-group">
+            <label for="email">Email Address</label>
+            <input 
+              type="email" 
+              id="email" 
+              placeholder="you@iub.edu.pk" 
+              required 
+            />
+            <span class="error-msg" id="err-email"></span>
+          </div>
 
-            <div>
-                <label>Confirm Password *</label>
-                <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
-            </div>
+          <!-- CGPA -->
+          <div class="field-group">
+            <label for="cgpa">CGPA (out of 4.0)</label>
+            <input 
+              type="number" 
+              id="cgpa" 
+              placeholder="e.g. 3.5" 
+              step="0.01" 
+              min="0" 
+              max="4" 
+              required 
+            />
+            <span class="error-msg" id="err-cgpa"></span>
+          </div>
 
+          <!-- Merit Score -->
+          <div class="field-group">
+            <label for="merit-score">Merit Score (out of 100)</label>
+            <input 
+              type="number" 
+              id="merit-score" 
+              placeholder="e.g. 85" 
+              min="0" 
+              max="100" 
+              required 
+            />
+            <span class="error-msg" id="err-merit-score"></span>
+          </div>
+
+          <!-- Family Income -->
+          <div class="field-group">
+            <label for="family-income">Family Annual Income (PKR)</label>
+            <input 
+              type="number" 
+              id="family-income" 
+              placeholder="e.g. 500000" 
+              min="0" 
+              required 
+            />
+            <span class="error-msg" id="err-family-income"></span>
+          </div>
+
+          <!-- Buttons -->
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Submit Application</button>
+            <button type="button" class="btn btn-secondary" id="clear-btn">Clear</button>
+          </div>
+        </form>
+
+        <!-- Result Summary (shown after submission) -->
+        <div id="result-box" class="hidden">
+          <h3>Eligibility Result</h3>
+          <div id="result-content"></div>
         </div>
 
-        <button type="submit">SIGN UP</button>
+      </aside>
 
-    </form>
+      <!-- RIGHT: My Applications List -->
+      <section class="applications-panel">
+        <h2>My Applications</h2>
+        <p class="hint">Your submitted applications will appear here. You can edit or delete them.</p>
+        
+        <div id="status-msg" class="status-msg"></div>
+        <ul id="applications-list" class="applications-list">
+          <!-- Applications will be loaded here by JavaScript -->
+        </ul>
+      </section>
 
-    <p id="result"></p>
+    </div>
+  </main>
 
-    <p class="login-link">
-        Already have an account? <span>Sign In</span>
-    </p>
-
-</div>
-
-<script src="script.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
