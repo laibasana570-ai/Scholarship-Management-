@@ -30,9 +30,6 @@ let activeFilter = "all";
 // 1. LOAD APPLICATIONS FROM API
 // ================================================================
 
-/**
- * Fetch all applications from JSON Server
- */
 async function loadApplications() {
   try {
     statusMsg.textContent = "Loading applications...";
@@ -62,11 +59,6 @@ async function loadApplications() {
 // 2. FILTER APPLICATIONS
 // ================================================================
 
-/**
- * Filter applications by status
- * @param {string} status - Status to filter by (all, approved, pending, rejected)
- * @returns {array} - Filtered applications
- */
 function filterByStatus(status) {
   if (status === "all") {
     return allApplications;
@@ -74,18 +66,9 @@ function filterByStatus(status) {
   return allApplications.filter(app => app.eligibilityStatus === status);
 }
 
-/**
- * Update filter UI when user clicks chip
- * @param {HTMLElement} chip - The clicked chip button
- */
 function updateFilterUI(chip) {
-  // Remove active class from all chips
   filterChips.forEach(c => c.classList.remove("active"));
-
-  // Add active class to clicked chip
   chip.classList.add("active");
-
-  // Store active filter
   activeFilter = chip.getAttribute("data-status");
 }
 
@@ -93,10 +76,6 @@ function updateFilterUI(chip) {
 // 3. RENDER APPLICATIONS AS CARDS
 // ================================================================
 
-/**
- * Display applications as cards on the page
- * @param {array} applications - Applications to display
- */
 function renderApplications(applications) {
   applicationsGrid.innerHTML = "";
 
@@ -111,10 +90,9 @@ function renderApplications(applications) {
 
   applications.forEach(app => {
     const card = document.createElement("div");
-    card.className = `application-card ${app.eligibilityStatus}`;
+    card.className = "application-card " + app.eligibilityStatus;
 
-    // Determine badge color based on status
-    let badgeClass = `badge-${app.eligibilityStatus}`;
+    let badgeClass = "badge-" + app.eligibilityStatus;
 
     card.innerHTML = `
       <div class="card-header">
@@ -130,26 +108,37 @@ function renderApplications(applications) {
         <span><strong>Merit:</strong> ${app.meritScore}/100</span>
         <span><strong>Income:</strong> PKR ${app.familyIncome.toLocaleString()}</span>
         <span><strong>Scholarship:</strong> ${app.scholarshipName || "N/A"}</span>
-        <span><strong>Amount:</strong> PKR ${app.scholarshipAmount?.toLocaleString() || "0"}</span>
+        <span><strong>Amount:</strong> PKR ${app.scholarshipAmount ? app.scholarshipAmount.toLocaleString() : "0"}</span>
         <span><strong>Submitted:</strong> ${app.submittedAt}</span>
       </div>
 
       <div class="card-actions">
-        ${app.eligibilityStatus === "approved" ? 
-          `<button class="btn btn-reject" onclick="changeStatus(${app.id}, 'pending')">Move to Pending</button>` 
-          : 
-          `<button class="btn btn-approve" onclick="changeStatus(${app.id}, 'approved')">Approve</button>`
-        }
-        ${app.eligibilityStatus === "rejected" ? 
-          `<button class="btn btn-approve" onclick="changeStatus(${app.id}, 'pending')">Reconsider</button>` 
-          : 
-          `<button class="btn btn-reject" onclick="changeStatus(${app.id}, 'rejected')">Reject</button>`
-        }
-        <button class="btn btn-delete" onclick="deleteApplication(${app.id})">Delete</button>
+        <button class="btn btn-approve action-btn" data-action="approve" data-id="${app.id}">Approve</button>
+        <button class="btn btn-warning action-btn" data-action="pending" data-id="${app.id}">To Pending</button>
+        <button class="btn btn-reject action-btn" data-action="reject" data-id="${app.id}">Reject</button>
+        <button class="btn btn-delete action-btn" data-action="delete" data-id="${app.id}">Delete</button>
       </div>
     `;
 
     applicationsGrid.appendChild(card);
+  });
+
+  // Add event listeners to action buttons
+  document.querySelectorAll(".action-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      const action = this.getAttribute("data-action");
+      const id = this.getAttribute("data-id");
+
+      if (action === "approve") {
+        changeStatus(id, "approved");
+      } else if (action === "pending") {
+        changeStatus(id, "pending");
+      } else if (action === "reject") {
+        changeStatus(id, "rejected");
+      } else if (action === "delete") {
+        deleteApplication(id);
+      }
+    });
   });
 }
 
@@ -157,17 +146,12 @@ function renderApplications(applications) {
 // 4. UPDATE STATISTICS
 // ================================================================
 
-/**
- * Update stat cards with counts
- * @param {array} applications - All applications
- */
 function updateStats(applications) {
   const total = applications.length;
   const approved = applications.filter(app => app.eligibilityStatus === "approved").length;
   const pending = applications.filter(app => app.eligibilityStatus === "pending").length;
   const rejected = applications.filter(app => app.eligibilityStatus === "rejected").length;
 
-  // Update stat card values
   statTotal.textContent = total;
   statApproved.textContent = approved;
   statPending.textContent = pending;
@@ -178,31 +162,20 @@ function updateStats(applications) {
 // 5. CHANGE APPLICATION STATUS
 // ================================================================
 
-/**
- * Update application status in database
- * @param {number} id - Application ID
- * @param {string} newStatus - New status (approved, pending, rejected)
- */
 async function changeStatus(id, newStatus) {
   try {
-    // Find the application
-    const app = allApplications.find(a => a.id === id);
-    if (!app) return;
-
-    // Update the object with new status
-    app.eligibilityStatus = newStatus;
-
-    // Determine scholarship status based on new status
-    if (newStatus === "approved") {
-      app.eligibilityStatus = "approved";
-    } else if (newStatus === "rejected") {
-      app.eligibilityStatus = "rejected";
-    } else {
-      app.eligibilityStatus = "pending";
+    id = String(id);
+    console.log("Changing status for app " + id + " to " + newStatus);
+    
+    const app = allApplications.find(a => String(a.id) === id);
+    if (!app) {
+      console.error("Application not found with id:", id);
+      return;
     }
 
-    // Send update to server
-    const response = await fetch(`${API_URL}/${id}`, {
+    app.eligibilityStatus = newStatus;
+
+    const response = await fetch(API_URL + "/" + id, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(app)
@@ -212,14 +185,19 @@ async function changeStatus(id, newStatus) {
       throw new Error("Failed to update status");
     }
 
-    console.log("Status updated for application #" + id);
-
-    // Reload applications
-    await loadApplications();
-
-    // Re-apply current filter
+    updateStats(allApplications);
+    
     const filtered = filterByStatus(activeFilter);
     renderApplications(filtered);
+    
+    statusMsg.textContent = "Status updated to " + newStatus.toUpperCase() + " successfully!";
+    statusMsg.classList.remove("error");
+    statusMsg.classList.add("visible");
+    
+    setTimeout(() => {
+      statusMsg.classList.remove("visible");
+    }, 3000);
+    
   } catch (error) {
     console.error("Error changing status:", error);
     statusMsg.textContent = "Error updating status";
@@ -231,17 +209,14 @@ async function changeStatus(id, newStatus) {
 // 6. DELETE APPLICATION
 // ================================================================
 
-/**
- * Delete an application from database
- * @param {number} id - Application ID
- */
 async function deleteApplication(id) {
   if (!confirm("Are you sure you want to delete this application?")) {
     return;
   }
 
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    id = String(id);
+    const response = await fetch(API_URL + "/" + id, {
       method: "DELETE"
     });
 
@@ -249,12 +224,8 @@ async function deleteApplication(id) {
       throw new Error("Failed to delete application");
     }
 
-    console.log("Application #" + id + " deleted");
+    allApplications = allApplications.filter(app => String(app.id) !== id);
 
-    // Remove from local array
-    allApplications = allApplications.filter(app => app.id !== id);
-
-    // Re-render
     const filtered = filterByStatus(activeFilter);
     renderApplications(filtered);
     updateStats(allApplications);
@@ -269,15 +240,11 @@ async function deleteApplication(id) {
 // 7. FILTER EVENT LISTENERS
 // ================================================================
 
-/**
- * Add click handlers to filter chips
- */
 filterChips.forEach(chip => {
   chip.addEventListener("click", function() {
-    // Update UI
-    updateFilterUI(this);
-
-    // Filter and render
+    filterChips.forEach(c => c.classList.remove("active"));
+    this.classList.add("active");
+    activeFilter = this.getAttribute("data-status");
     const filtered = filterByStatus(activeFilter);
     renderApplications(filtered);
   });
@@ -287,5 +254,4 @@ filterChips.forEach(chip => {
 // 8. INITIALIZE ON PAGE LOAD
 // ================================================================
 
-// Load all applications when page loads
 loadApplications();

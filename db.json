@@ -23,7 +23,7 @@
       "familyIncome": 600000,
       "scholarshipName": "Not Eligible",
       "scholarshipAmount": 0,
-      "eligibilityStatus": "rejected",
+      "eligibilityStatus": "pending",
       "submittedAt": "2026-06-03"
     },
     {
@@ -38,6 +38,19 @@
       "eligibilityStatus": "approved",
       "submittedAt": "2026-06-05",
       "id": "kGwFwZXIENs"
+    },
+    {
+      "regNo": "F24BDOCS1M01054",
+      "fullName": "Ayesha",
+      "email": "ayesha890@gmail.com",
+      "cgpa": 3.1,
+      "meritScore": 70,
+      "familyIncome": 30000,
+      "scholarshipName": "Half Scholarship",
+      "scholarshipAmount": 50000,
+      "eligibilityStatus": "approved",
+      "submittedAt": "2026-06-14",
+      "id": "SrDvZLnUmnc"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
